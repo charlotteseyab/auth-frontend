@@ -22,7 +22,7 @@ import LoginPage from './pages/login/login';
 import RegisterPage from './pages/register/register';
 import ForgotPasswordPage from './pages/forgot-password';
 // import ClientDashboardPage from './pages/clientDashboard/ClientDashboard';
-import ClientDashboard from './pages/clientDashboard/ClientDashboard';
+// import ClientDashboard from './pages/clientDashboard/ClientDashboard';
 // Import About if you have it
 // import About from './pages/home/About';
 import { useEffect, useState } from 'react';
@@ -89,17 +89,17 @@ function App() {
         { path: "forgot-password", element: <ForgotPasswordPage /> },
         
         // Protected client routes
-        {
-          path: "/dashboard/client",
-          element: (
-            // <ProtectedRoute allowedRoles={['client', 'admin']}>
-          <ClientDashboard />
-            // </ProtectedRoute>
-          ),
-          children: [
-            { path: "settings", element: <AccountSettings /> }
-          ]
-        },
+        // {
+        //   path: "/dashboard/client",
+        //   element: (
+        //     // <ProtectedRoute allowedRoles={['client', 'admin']}>
+        //   <ClientDashboard />
+        //     // </ProtectedRoute>
+        //   ),
+        //   children: [
+        //     { path: "settings", element: <AccountSettings /> }
+        //   ]
+        // },
 
         // Protected admin routes
         {
