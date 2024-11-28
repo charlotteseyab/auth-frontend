@@ -5,10 +5,10 @@ const baseURL = import.meta.env.VITE_BASE_URL
 const api = axios.create({
     baseURL,
     withCredentials:true,
-    headers:{
-        "Content-Type": "application/json",
-        Accept: "application/json"
-    }
+    // headers:{
+    //     "Content-Type": "application/json",
+    //     Accept: "application/json"
+    // }
 });
 
 // api.interceptors.request.use((config) => {
