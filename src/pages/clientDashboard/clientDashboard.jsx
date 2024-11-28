@@ -1,37 +1,47 @@
 // ClientDashboard.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import welcomeImg from '../../assets/img/welcome-img.svg';
-import Home from './home.jsx';
+// import Home from './home.jsx';
 import AccountSettings from './accountSettings.jsx';
+import toast from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeSection, setActiveSection] = useState(
     localStorage.getItem('clientActiveSection') || 'home'
   );
 
-  useEffect(() => {
-    if (!localStorage.getItem('clientActiveSection')) {
-      localStorage.setItem('clientActiveSection', 'home'); // Default to 'home' if not set
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!localStorage.getItem('clientActiveSection')) {
+  //     localStorage.setItem('clientActiveSection', 'home'); // Default to 'home' if not set
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    const checkRole = setInterval(() => {
-      const storedRole = localStorage.getItem('userRole');
-      if (storedRole === 'admin') {
-        clearInterval(checkRole);
-        navigate('/adminDashboard');
-      }
-    }, 1000);
+  // useEffect(() => {
+  //   const checkRole = setInterval(() => {
+  //     const storedRole = localStorage.getItem('userRole');
+  //     if (storedRole === 'admin') {
+  //       clearInterval(checkRole);
+  //       navigate('/adminDashboard');
+  //     }
+  //   }, 1000);
 
-    return () => clearInterval(checkRole);
-  }, [navigate]);
+  //   return () => clearInterval(checkRole);
+  // }, [navigate]);
 
-  useEffect(() => {
-    localStorage.setItem('clientActiveSection', activeSection);
-  }, [activeSection]);
+  // useEffect(() => {
+  //   localStorage.setItem('clientActiveSection', activeSection);
+  // }, [activeSection]);
+
+  // useEffect(() => {
+  //   console.log('Dashboard mounted, location state:', location.state);
+  //   if (location.state?.showSuccessToast) {
+  //     toast.success('Login successful!');
+  //   }
+  // }, []);
 
   const handleRoleChange = () => {
     localStorage.setItem('userRole', 'admin');
@@ -43,16 +53,16 @@ const ClientDashboard = () => {
     navigate('/');
   };
 
-  const renderSection = () => {
-    switch (activeSection) {
-      case 'home':
-        return <Home />;
-      case 'account':
-        return <AccountSettings onRoleChange={handleRoleChange} />;
-      default:
-        return <Home />;
-    }
-  };
+  // const renderSection = () => {
+  //   switch (activeSection) {
+  //     case 'home':
+  //       return <Home />;
+  //     case 'account':
+  //       return <AccountSettings onRoleChange={handleRoleChange} />;
+  //     default:
+  //       return <Home />;
+  //   }
+  // };
 
   return (
     <div className="flex flex-col sm:flex-row min-h-screen bg-gray-100">
@@ -94,9 +104,13 @@ const ClientDashboard = () => {
               className="rounded-lg mb-4 max-w-full"
             />
           )}
-          {renderSection()}
+          Hello HOme
+          {/* {renderSection()} */}
         </div>
       </div>
+
+      {/* Toaster Component */}
+      <Toaster position="top-right" />
     </div>
   );
 };

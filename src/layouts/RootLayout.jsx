@@ -4,15 +4,14 @@ import NavBar from "../components/NavBar";
 import HeroSection from "../pages/home/HeroSection";
 // import About from "../pages/home/about";
 import Footer from "../pages/home/footer";
+import Navbar from "../components/NavBar";
 
 
 const RootLayout = () => {
     return (
         <div>
-            <NavBar />
+            <Navbar />
             <Outlet />
-            <HeroSection />
-            {/* <About /> */}
             <Footer />
         </div>
     );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,15 +13,15 @@ const Navbar = () => {
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo / Branding */}
                 <div className="text-white text-lg font-bold">
-                    <a href="/">MyApp</a>
+                    <Link to="/">MyApp</Link>
                 </div>
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex space-x-6">
-                    <a href="/" className="text-white hover:text-blue-200">Home</a>
-                    <a href="/about" className="text-white hover:text-blue-200">About</a>
-                    <a href="/services" className="text-white hover:text-blue-200">Services</a>
-                    <a href="/contact" className="text-white hover:text-blue-200">Contact</a>
+                    {/* <a href="/" className="text-white hover:text-blue-200">Home</a> */}
+                    <Link to="/about" className="text-white hover:text-blue-200">About</Link>
+                    <Link to="/services" className="text-white hover:text-blue-200">Services</Link>
+                    <Link to="/contact" className="text-white hover:text-blue-200">Contact</Link>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -48,10 +49,10 @@ const Navbar = () => {
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-blue-700 text-white py-4">
-                    <a href="/" className="block px-4 py-2 hover:bg-blue-800">Home</a>
-                    <a href="/about" className="block px-4 py-2 hover:bg-blue-800">About</a>
-                    <a href="/services" className="block px-4 py-2 hover:bg-blue-800">Services</a>
-                    <a href="/contact" className="block px-4 py-2 hover:bg-blue-800">Contact</a>
+                    <Link to="/" className="block px-4 py-2 hover:bg-blue-800">Home</Link>
+                    <Link to="/about" className="block px-4 py-2 hover:bg-blue-800">About</Link>
+                    <Link to="/services" className="block px-4 py-2 hover:bg-blue-800">Services</Link>
+                    <Link to="/contact" className="block px-4 py-2 hover:bg-blue-800">Contact</Link>
                 </div>
             )}
         </nav>

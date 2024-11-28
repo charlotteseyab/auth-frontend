@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto text-center">
         <p className="text-lg">
           &copy; 2024{' '}
-          <span className="font-bold text-blue-400">Charlotte and Albert</span>. All rights reserved.
+          <span className="font-bold text-blue-400">Charlotte & Albert</span>. All rights reserved.
         </p>
       </div>
     </footer>

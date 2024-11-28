@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const AccountSettings = () => {
     const [username, setUsername] = useState('JohnDoe');
@@ -42,16 +43,76 @@ const AccountSettings = () => {
         }
     };
 
-    // Redirect to Admin Dashboard if role changes to Admin
-    useEffect(() => {
-        if (role === 'Admin') {
-            navigate('/adminDashboard');
-        }
-    }, [role, navigate]);
+    const handleRoleChange = async (e) => {
+        const newRole = e.target.value;
+        
+        if (newRole === 'Admin') {
+            // Show confirmation alert
+            const result = await Swal.fire({
+                title: 'Change Role to Admin?',
+                text: "You will be redirected to the Admin Dashboard. Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, change role!',
+                cancelButtonText: 'Cancel'
+            });
 
-    const handleRoleChange = (e) => {
-        setRole(e.target.value);
-        window.alert(`Are you sure you want to change your role to ${e.target.value}`);
+            if (result.isConfirmed) {
+                try {
+                    // Update role in localStorage
+                    const userData = JSON.parse(localStorage.getItem('user'));
+                    const updatedUserData = {
+                        ...userData,
+                        role: 'admin' // Make sure it's lowercase to match your protected routes
+                    };
+                    localStorage.setItem('user', JSON.stringify(updatedUserData));
+
+                    // Show success alert before redirect
+                    await Swal.fire({
+                        title: 'Role Changed!',
+                        text: 'Redirecting to Admin Dashboard...',
+                        icon: 'success',
+                        timer: 1500,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    });
+
+                    // Set the role and navigate
+                    setRole(newRole);
+                    navigate('/admindashboard', { replace: true });
+                } catch (error) {
+                    console.error('Error updating role:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to update role. Please try again.',
+                        icon: 'error',
+                        confirmButtonColor: '#3085d6',
+                    });
+                }
+            }
+        } else {
+            try {
+                // Update role in localStorage for non-admin role
+                const userData = JSON.parse(localStorage.getItem('user'));
+                const updatedUserData = {
+                    ...userData,
+                    role: 'client'
+                };
+                localStorage.setItem('user', JSON.stringify(updatedUserData));
+                setRole(newRole);
+            } catch (error) {
+                console.error('Error updating role:', error);
+            }
+        }
     };
 
     const handleUsernameChange = (e) => {

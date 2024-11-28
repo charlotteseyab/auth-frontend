@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -7,7 +8,6 @@ const ForgotPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
     const [step, setStep] = useState(1);
-    const [resetSuccess, setResetSuccess] = useState(false);
     const navigate = useNavigate();
 
     // Dummy sendResetCode function to simulate API response
@@ -54,8 +54,28 @@ const ForgotPassword = () => {
         e.preventDefault();
         try {
             await resetPassword({ email, code, newPassword });
-            setMessage('Password reset successful!');
-            setResetSuccess(true);
+            
+            // Show success SweetAlert with confirmation button
+            const result = await Swal.fire({
+                title: 'Password Reset Successful!',
+                text: 'Your password has been changed successfully',
+                icon: 'success',
+                confirmButtonText: 'Continue to Login',
+                confirmButtonColor: '#3B82F6', // Tailwind blue-600
+                allowOutsideClick: false,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            });
+
+            // Only navigate if the confirm button was clicked
+            if (result.isConfirmed) {
+                navigate('/login');
+            }
+            
         } catch (error) {
             setMessage(error.message);
         }
@@ -131,16 +151,6 @@ const ForgotPassword = () => {
                     </form>
                 )}
                 {message && <p className="mt-4 text-center text-green-500">{message}</p>}
-                {resetSuccess && (
-                    <div className="mt-4 text-center">
-                        <button
-                            onClick={() => navigate('/login')}
-                            className="bg-blue-600 text-white py-2 px-4 rounded-lg"
-                        >
-                            Go to Login Page
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );

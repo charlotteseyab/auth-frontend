@@ -1,10 +1,12 @@
 import React from 'react'
-import RootLayout from '../../layouts/RootLayout';
+import HeroSection from './HeroSection';
+import Navbar from '../../components/NavBar';
+import Footer from './footer';
 
 const Home = () => {
   return (
     <div>
-        <RootLayout />
+        <HeroSection />
     </div>
   )
 }

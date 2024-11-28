@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RegisterImg from '../../assets/img/register-img.svg';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+import { apiSignupComplete, apiSignupStart } from '../../services/auth';
 
 const sendVerificationCode = async ({ email }) => {
     return new Promise((resolve) => {
@@ -21,34 +24,67 @@ const completeRegistration = async (formData) => {
 };
 
 const Register = () => {
+    const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [step, setStep] = useState(1);
+    const [formError, setFormError] = useState('');
     const navigate = useNavigate();
 
     const handleInitialSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await sendVerificationCode({ email });
+            setLoading(true)
+            const { data } = await apiSignupStart({ email, password, name });
+            console.log("API response:", data);
             setMessage("Verification code sent to your email.");
             setStep(2);
         } catch (error) {
             setMessage("Failed to send verification code.");
+        }finally{
+            setLoading(false)
         }
     };
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
-        const formData = { email, code, name, password };
+        
         try {
-            const { data } = await completeRegistration(formData);
-            setMessage("Registration successful! Redirecting to your dashboard...");
-            navigate('/clientDashboard');  // Redirects to the client dashboard
+            setLoading(true)
+            const { data } = await apiSignupComplete({ 
+                email, 
+                verificationCode: code 
+            });
+            console.log("new user-->", data)
+            await Swal.fire({
+                title: 'Registration Successful!',
+                text: 'Welcome to our platform',
+                icon: 'success',
+                timer: 1500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                },
+                willClose: () => {
+                    return new Promise(resolve => setTimeout(resolve, 200));
+                }
+            });
+
+            navigate('/dashboard/client', { replace: true });
+
         } catch (error) {
-            setMessage("Registration failed");
+            setFormError(error.message || "Registration failed");
+            toast.error(error.message || "Registration failed");
+        }finally{
+            setLoading(false)
         }
     };
 
@@ -69,6 +105,8 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Name:</label>
                                 <input
+                                disabled={loading}
+
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -80,6 +118,8 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Email:</label>
                                 <input
+                                disabled={loading}
+
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -91,6 +131,8 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Password:</label>
                                 <input
+                                disabled={loading}
+
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -102,10 +144,12 @@ const Register = () => {
                                 />
                             </div>
                             <button
+                                disabled={loading}
+
                                 type="submit"
                                 className="w-full bg-blue-600 text-white p-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
                             >
-                                Send Verification Code
+                               {loading? "Sending Verification Code..." :" Send Verification Code"}
                             </button>
                         </form>
                     ) : (
@@ -113,6 +157,8 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Verification Code:</label>
                                 <input
+                                disabled={loading}
+
                                     type="text"
                                     value={code}
                                     onChange={(e) => setCode(e.target.value)}
@@ -124,6 +170,7 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Email:</label>
                                 <input
+                                disabled={loading}
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -132,6 +179,8 @@ const Register = () => {
                                 />
                             </div>
                             <button
+                                disabled={loading}
+
                                 type="submit"
                                 className="w-full bg-blue-600 text-white p-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
                             >
@@ -140,6 +189,7 @@ const Register = () => {
                         </form>
                     )}
                     {message && <p className="mt-4 text-center text-green-500">{message}</p>}
+                    {formError && <p className="mt-4 text-center text-red-500">{formError}</p>}
                 </div>
             </div>
         </div>

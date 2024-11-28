@@ -2,13 +2,23 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast'; // Import toast from react-hot-toast
 import loginImg from '../../assets/img/login-img.svg';
+import { Toaster } from 'react-hot-toast';
+import Swal from 'sweetalert2';  // Add this import
+import { apiLogin } from '../../services/auth';
 
 // Mock function to simulate login API call
 const loginUser = async ({ email, password }) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             if (password === "aaa") {
-                resolve({ data: "Login successful" });
+                resolve({ 
+                    data: {
+                        token: "mock-jwt-token",
+                        email: email,
+                        role: "client", // or "admin" based on your needs
+                        message: "Login successful"
+                    }
+                });
             } else {
                 reject({ response: { data: { message: "Invalid email or password" } } });
             }
@@ -17,6 +27,7 @@ const loginUser = async ({ email, password }) => {
 };
 
 const Login = () => {
+    const[loading, setLoading] = useState(false)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -25,16 +36,47 @@ const Login = () => {
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await loginUser({ email, password });
-            setMessage("Login successful!");
-            toast.success('Login successful!'); // Show success toast
+            setLoading(true)
+            const { data } = await apiLogin({ email, password });
+            console.log("logged in user-->", data)
+            // return
+            // Store token and user info with proper data structure
+            // localStorage.setItem('token', data.token);
+            // localStorage.setItem('user', JSON.stringify({
+            //     email: data.email,
+            //     role: data.role.toLowerCase(), // Ensure role is lowercase
+            // }));
 
-            setTimeout(() => {
-                navigate('/clientdashboard'); // Redirect to ClientDashboard on success
-            }, 1000); // Optional delay to show success message
+            // Show success alert
+            await Swal.fire({
+                title: 'Welcome Back!',
+                text: 'Login successful',
+                icon: 'success',
+                timer: 1500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            });
+
+            // Navigate based on role
+            if (data.roles.includes('admin')) {
+                navigate('/admindashboard');
+            } else {
+                navigate('/dashboard/client');
+            }
+            
         } catch (error) {
             setMessage(error.response?.data?.message || "Login failed");
-            toast.error(error.response?.data?.message || "Login failed"); // Show error toast
+            toast.error(error.response?.data?.message || "Login failed");
+            console.log(error)
+        }finally{
+            setLoading(false)
         }
     };
 
@@ -55,6 +97,7 @@ const Login = () => {
                         <div className="form-group">
                             <label className="block text-gray-700 font-medium mb-2">Verified Email:</label>
                             <input
+                            disabled={loading}
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -66,6 +109,7 @@ const Login = () => {
                         <div className="form-group">
                             <label className="block text-gray-700 font-medium mb-2">Password:</label>
                             <input
+                            disabled={loading}
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -78,7 +122,7 @@ const Login = () => {
                             type="submit"
                             className="w-full bg-blue-600 text-white p-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                         >
-                            Login
+                           {loading ? "Loading..." : "Login"}
                         </button>
                         <p className="text-sm text-center mt-4">
                             <Link to="/forgotPassword" className="text-blue-500 hover:underline">
@@ -89,6 +133,7 @@ const Login = () => {
                     {message && <p className="mt-4 text-center text-green-500">{message}</p>}
                 </div>
             </div>
+            <Toaster position="top-right" />
         </div>
     );
 };
