@@ -13,7 +13,7 @@ const Navbar = () => {
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo / Branding */}
                 <div className="text-white text-lg font-bold">
-                    <Link to="/">MyApp</Link>
+                    <Link to="/">GorillaSystems</Link>
                 </div>
 
                 {/* Desktop Menu */}

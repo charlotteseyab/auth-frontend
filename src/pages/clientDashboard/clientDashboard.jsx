@@ -1,110 +1,79 @@
 // ClientDashboard.js
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import welcomeImg from '../../assets/img/welcome-img.svg';
 // import Home from './home.jsx';
-import AccountSettings from './accountSettings.jsx';
-import toast from 'react-hot-toast';
 import { Toaster } from 'react-hot-toast';
+import { useUser } from '../../hooks/user.js';
 
 const ClientDashboard = () => {
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+
+  const { user, logout } = useUser()
   const [activeSection, setActiveSection] = useState(
     localStorage.getItem('clientActiveSection') || 'home'
   );
 
-  // useEffect(() => {
-  //   if (!localStorage.getItem('clientActiveSection')) {
-  //     localStorage.setItem('clientActiveSection', 'home'); // Default to 'home' if not set
-  //   }
-  // }, []);
+  console.log("user in state-->", user)
 
-  // useEffect(() => {
-  //   const checkRole = setInterval(() => {
-  //     const storedRole = localStorage.getItem('userRole');
-  //     if (storedRole === 'admin') {
-  //       clearInterval(checkRole);
-  //       navigate('/adminDashboard');
-  //     }
-  //   }, 1000);
-
-  //   return () => clearInterval(checkRole);
-  // }, [navigate]);
-
-  // useEffect(() => {
-  //   localStorage.setItem('clientActiveSection', activeSection);
-  // }, [activeSection]);
-
-  // useEffect(() => {
-  //   console.log('Dashboard mounted, location state:', location.state);
-  //   if (location.state?.showSuccessToast) {
-  //     toast.success('Login successful!');
-  //   }
-  // }, []);
 
   const handleRoleChange = () => {
     localStorage.setItem('userRole', 'admin');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('clientActiveSection');
-    localStorage.removeItem('userRole');
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      setLogoutLoading(true);
+      await logout()
+      navigate('/');
+    } catch (error) {
+      console.log("Error logging out user:", error);
+    } finally {
+      setLogoutLoading(false)
+    }
+
   };
 
-  // const renderSection = () => {
-  //   switch (activeSection) {
-  //     case 'home':
-  //       return <Home />;
-  //     case 'account':
-  //       return <AccountSettings onRoleChange={handleRoleChange} />;
-  //     default:
-  //       return <Home />;
-  //   }
-  // };
+
 
   return (
     <div className="flex flex-col sm:flex-row min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="sm:w-1/4 bg-blue-800 text-white flex flex-col p-6">
-        <h2 className="text-2xl font-semibold mb-6">Client Dashboard</h2>
+      <div className="sm:w-1/5 bg-gradient-to-b from-blue-600 to-blue-800 bg-opacity-90 backdrop-blur-lg text-white flex flex-col p-6 shadow-lg rounded-lg">
+        <h2 className="text-2xl font-bold mb-6 text-center">Welcome {user ? user.name : "User"}</h2>
         <button
           onClick={() => setActiveSection('home')}
-          className={`py-3 px-4 text-left mb-4 hover:bg-gray-700 rounded ${
-            activeSection === 'home' ? 'bg-blue-600' : ''
-          }`}
+          className={`py-2 px-4 text-left mb-3 hover:bg-blue-700 rounded-lg transition duration-300 transform hover:scale-105 ${activeSection === 'home' ? 'bg-blue-500' : ''
+            }`}
         >
           Home
         </button>
         <button
           onClick={() => setActiveSection('account')}
-          className={`py-3 px-4 text-left mb-4 hover:bg-gray-700 rounded ${
-            activeSection === 'account' ? 'bg-blue-600' : ''
-          }`}
+          className={`py-2 px-4 text-left mb-3 hover:bg-blue-700 rounded-lg transition duration-300 transform hover:scale-105 ${activeSection === 'account' ? 'bg-blue-500' : ''
+            }`}
         >
           Account Settings
         </button>
         <button
           onClick={handleLogout}
-          className="py-3 px-4 text-left mt-auto bg-red-600 hover:bg-red-700 rounded"
+          className="py-2 px-4 text-left mt-auto bg-red-600 hover:bg-red-700 rounded-lg transition duration-300 transform hover:scale-105"
         >
-          Logout
+          {logoutLoading ? "Logging out..." : "Logout"}
         </button>
       </div>
 
       {/* Main Content */}
-      <div className="sm:w-3/4 p-6">
-        <h1 className="text-3xl font-semibold mb-6">Welcome to Your Client Dashboard</h1>
-        <div className="bg-white p-6 shadow-md rounded-lg">
+      <div className="sm:w-4/5 p-6">
+        <div className="bg-white p-6 shadow-lg rounded-lg border border-gray-300">
           {activeSection === 'home' && (
             <img
               src={welcomeImg}
               alt="Client's Dashboard Image"
-              className="rounded-lg mb-4 max-w-full"
+              className="rounded-lg mb-4 max-w-full shadow-md"
             />
           )}
-          Hello HOme
           {/* {renderSection()} */}
         </div>
       </div>

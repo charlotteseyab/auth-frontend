@@ -10,7 +10,7 @@ const HeroSection = () => {
         >
             <div className="bg-black bg-opacity-50 p-8 rounded-lg text-center">
                 <h1 className="text-4xl font-bold mb-4">
-                    Welcome to MyApp
+                    Welcome to GorillaSystems
                 </h1>
                 <p className="text-lg mb-8">
                     Your journey starts here! Choose an option below to get started.

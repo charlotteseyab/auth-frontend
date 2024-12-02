@@ -1,6 +1,5 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
-import ProtectedRoute from './routes/ProtectedRoute';
 // import Register from './pages/register/register'
 // import Login from './pages/login'
 import ForgotPassword from './pages/forgot-password'
@@ -10,7 +9,6 @@ import { Toaster } from 'react-hot-toast'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
-import Unauthorized from './routes/Unauthorized';
 import AccountSettings from './pages/clientDashboard/accountSettings';
 import Footer from './pages/home/footer';
 import AdminHome from './pages/adminDashboard/adminHome';
@@ -22,11 +20,14 @@ import LoginPage from './pages/login/login';
 import RegisterPage from './pages/register/register';
 import ForgotPasswordPage from './pages/forgot-password';
 // import ClientDashboardPage from './pages/clientDashboard/ClientDashboard';
-// import ClientDashboard from './pages/clientDashboard/ClientDashboard';
+import ClientDashboard from './pages/clientDashboard/ClientDashboard';
 // Import About if you have it
 // import About from './pages/home/About';
 import { useEffect, useState } from 'react';
 import { apiCurrentUser } from './services/auth';
+import { useDispatch } from 'react-redux'
+import ClientRoute from './routes/ClientRoute';
+import AdminRoute from './routes/AdminRoute';
 
 
 // Custom toast configurations
@@ -47,17 +48,17 @@ const authToastConfig = {
 
 // Global SweetAlert2 customization
 const swalCustom = Swal.mixin({
-    customClass: {
-        confirmButton: 'btn btn-success px-4',
-        cancelButton: 'btn btn-danger'
-    },
-    buttonsStyling: false,
-    showClass: {
-        popup: 'animate__animated animate__fadeInDown'
-    },
-    hideClass: {
-        popup: 'animate__animated animate__fadeOutUp'
-    }
+  customClass: {
+    confirmButton: 'btn btn-success px-4',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: false,
+  showClass: {
+    popup: 'animate__animated animate__fadeInDown'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__fadeOutUp'
+  }
 });
 
 // Replace Swal with your custom version
@@ -67,17 +68,29 @@ window.Swal = swalCustom;
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   // check and get the currently logged in user
 
-  const fetchCurrentUser = async ()=>{
-    const res = await apiCurrentUser()
-    console.log("Current user----->", res.data)
-  }
-  useEffect(() => {
-    fetchCurrentUser()
-  }, [])
-  
+  // const fetchCurrentUser = async () => {
+  //   try {
+  //     setLoading(true)
+  //     const res = await apiCurrentUser()
+  //     console.log("Current user----->", res.data)
+  //     setCurrentUser(res.data)
+  //     dispatch({ type: "LOGGED_IN_USER", payload: res.data })
+  //   } catch (error) {
+
+  //   } finally {
+  //     setLoading(false)
+  //   }
+
+  // }
+  // useEffect(() => {
+  //   fetchCurrentUser()
+  // }, [])
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -87,27 +100,28 @@ function App() {
         { path: "login", element: <LoginPage /> },
         { path: "register", element: <RegisterPage /> },
         { path: "forgot-password", element: <ForgotPasswordPage /> },
-        
+
         // Protected client routes
-        // {
-        //   path: "/dashboard/client",
-        //   element: (
-        //     // <ProtectedRoute allowedRoles={['client', 'admin']}>
-        //   <ClientDashboard />
-        //     // </ProtectedRoute>
-        //   ),
-        //   children: [
-        //     { path: "settings", element: <AccountSettings /> }
-        //   ]
-        // },
+        {
+          path: "/dashboard/client",
+          element: (
+            <ClientRoute >
+              <ClientDashboard />
+            </ClientRoute>
+          ),
+          children: [
+            { path: "settings", element: <AccountSettings /> }
+          ]
+        },
 
         // Protected admin routes
         {
-          path: "admindashboard",
+          path: "/dashboard/admin",
           element: (
-            <ProtectedRoute allowedRoles={['admin']}>
+            <AdminRoute>
               <AdminDashboard />
-            </ProtectedRoute>
+            </AdminRoute>
+
           ),
           children: [
             { index: true, element: <AdminHome /> }
@@ -115,7 +129,6 @@ function App() {
         },
 
         // Utility routes
-        { path: "unauthorized", element: <Unauthorized /> },
         // { path: "*", element: <Navigate to="/" /> }
       ]
     }
