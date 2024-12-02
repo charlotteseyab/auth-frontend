@@ -1,31 +1,22 @@
 import './App.css'
-import { BrowserRouter as Router, Routes, Route, Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 // import Register from './pages/register/register'
 // import Login from './pages/login'
-import ForgotPassword from './pages/forgot-password'
 
 import AdminDashboard from './pages/adminDashboard'
 import { Toaster } from 'react-hot-toast'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
-import AccountSettings from './pages/clientDashboard/accountSettings';
-import Footer from './pages/home/footer';
+import AccountSettings from './pages/client-dashboard/AccountSettings';
 import AdminHome from './pages/adminDashboard/adminHome';
-import Navbar from './components/NavBar';
-import { Children } from 'react';
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/home'
 import LoginPage from './pages/login/login';
 import RegisterPage from './pages/register/register';
 import ForgotPasswordPage from './pages/forgot-password';
-// import ClientDashboardPage from './pages/clientDashboard/ClientDashboard';
-import ClientDashboard from './pages/clientDashboard/ClientDashboard';
-// Import About if you have it
-// import About from './pages/home/About';
-import { useEffect, useState } from 'react';
-import { apiCurrentUser } from './services/auth';
-import { useDispatch } from 'react-redux'
+import ClientDashboard from './pages/client-dashboard';
+
 import ClientRoute from './routes/ClientRoute';
 import AdminRoute from './routes/AdminRoute';
 
@@ -67,30 +58,6 @@ window.Swal = swalCustom;
 
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch()
-
-  // check and get the currently logged in user
-
-  // const fetchCurrentUser = async () => {
-  //   try {
-  //     setLoading(true)
-  //     const res = await apiCurrentUser()
-  //     console.log("Current user----->", res.data)
-  //     setCurrentUser(res.data)
-  //     dispatch({ type: "LOGGED_IN_USER", payload: res.data })
-  //   } catch (error) {
-
-  //   } finally {
-  //     setLoading(false)
-  //   }
-
-  // }
-  // useEffect(() => {
-  //   fetchCurrentUser()
-  // }, [])
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -128,8 +95,7 @@ function App() {
           ]
         },
 
-        // Utility routes
-        // { path: "*", element: <Navigate to="/" /> }
+       
       ]
     }
   ]);
