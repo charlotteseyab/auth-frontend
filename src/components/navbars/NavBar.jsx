@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useUser } from '../../hooks/user';
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { user, logout } = useUser()
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -17,11 +19,16 @@ const Navbar = () => {
                 </div>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex space-x-6">
+                <div className="hidden md:flex items-center space-x-6">
                     {/* <a href="/" className="text-white hover:text-blue-200">Home</a> */}
                     <Link to="/about" className="text-white hover:text-blue-200">About</Link>
                     <Link to="/services" className="text-white hover:text-blue-200">Services</Link>
                     <Link to="/contact" className="text-white hover:text-blue-200">Contact</Link>
+                    {user ? <button
+                        onClick={async () => await logout()}
+                        className='text-white bg-red-500 hover:bg-red-600 p-2 rounded-xl'>Logout</button>
+                    :""
+                    }
                 </div>
 
                 {/* Mobile Menu Toggle */}

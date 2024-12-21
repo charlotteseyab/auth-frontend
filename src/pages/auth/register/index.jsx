@@ -1,27 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import RegisterImg from '../../assets/img/register-img.svg';
+import RegisterImg from '../../../assets/img/register-img.svg';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import { apiSignupComplete, apiSignupStart } from '../../services/auth';
+import { apiSignupComplete, apiSignupStart } from '../../../services/auth';
+import { useUser } from '../../../hooks/user';
 
-const sendVerificationCode = async ({ email }) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log(`Verification code sent to ${email}`);
-            resolve({ data: "Verification code sent" });
-        }, 1000);
-    });
-};
 
-const completeRegistration = async (formData) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log("User registered with data:", formData);
-            resolve({ data: "Registration successful" });
-        }, 1000);
-    });
-};
 
 const Register = () => {
     const [loading, setLoading] = useState(false)
@@ -33,6 +18,7 @@ const Register = () => {
     const [step, setStep] = useState(1);
     const [formError, setFormError] = useState('');
     const navigate = useNavigate();
+    const { refresh } = useUser()
 
     const handleInitialSubmit = async (e) => {
         e.preventDefault();
@@ -44,19 +30,19 @@ const Register = () => {
             setStep(2);
         } catch (error) {
             setMessage("Failed to send verification code.");
-        }finally{
+        } finally {
             setLoading(false)
         }
     };
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
-        
+
         try {
             setLoading(true)
-            const { data } = await apiSignupComplete({ 
-                email, 
-                verificationCode: code 
+            const { data } = await apiSignupComplete({
+                email,
+                verificationCode: code
             });
             console.log("new user-->", data)
             await Swal.fire({
@@ -77,13 +63,13 @@ const Register = () => {
                     return new Promise(resolve => setTimeout(resolve, 200));
                 }
             });
-
-            navigate('/dashboard/client', { replace: true });
+            await refresh()
+            navigate('/dashboard/client');
 
         } catch (error) {
-            setFormError(error.message || "Registration failed");
-            toast.error(error.message || "Registration failed");
-        }finally{
+            setFormError(error.response?.data?.error || "Registration failed");
+            toast.error(error.response?.data?.error || "Registration failed");
+        } finally {
             setLoading(false)
         }
     };
@@ -92,8 +78,8 @@ const Register = () => {
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg flex overflow-hidden">
                 <div className="w-full md:w-1/2 flex justify-center">
-                    <img 
-                        src={RegisterImg} 
+                    <img
+                        src={RegisterImg}
                         alt="Registration"
                         className="w-full h-full object-fit max-h-full"
                     />
@@ -105,7 +91,7 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Name:</label>
                                 <input
-                                disabled={loading}
+                                    disabled={loading}
 
                                     type="text"
                                     value={name}
@@ -118,7 +104,7 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Email:</label>
                                 <input
-                                disabled={loading}
+                                    disabled={loading}
 
                                     type="email"
                                     value={email}
@@ -131,7 +117,7 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Password:</label>
                                 <input
-                                disabled={loading}
+                                    disabled={loading}
 
                                     type="password"
                                     value={password}
@@ -149,7 +135,7 @@ const Register = () => {
                                 type="submit"
                                 className="w-full bg-blue-600 text-white p-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
                             >
-                               {loading? "Sending Verification Code..." :" Send Verification Code"}
+                                {loading ? "Sending Verification Code..." : " Send Verification Code"}
                             </button>
                         </form>
                     ) : (
@@ -157,7 +143,7 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Verification Code:</label>
                                 <input
-                                disabled={loading}
+                                    disabled={loading}
 
                                     type="text"
                                     value={code}
@@ -170,7 +156,7 @@ const Register = () => {
                             <div className="form-group">
                                 <label className="block text-gray-700 font-medium mb-2">Email:</label>
                                 <input
-                                disabled={loading}
+                                    disabled={loading}
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}

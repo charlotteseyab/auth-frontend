@@ -1,7 +1,6 @@
 import React from 'react'
 import HeroSection from './HeroSection';
-import Navbar from '../../components/NavBar';
-import Footer from './footer';
+
 
 const Home = () => {
   return (

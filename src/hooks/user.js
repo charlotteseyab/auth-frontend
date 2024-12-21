@@ -3,7 +3,12 @@ import { fetcher } from '../services/config'
 import { apiLogout } from '../services/auth';
 
 export const useUser = () => {
-    const { data, mutate, isLoading, error } = useSWR('/current-user', fetcher)
+    const { data, mutate, isLoading, error, } = useSWR('/current-user', fetcher, {
+        revalidateOnFocus: false,
+        refreshInterval: 0,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false
+    })
 
     const logout = async () => {
         try {

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
 import heroImg from '../../assets/img/hero-img.png';
+import {useUser} from '../../hooks/user';
 
 const HeroSection = () => {
+    const {user, userLoading} = useUser();
     return (
         <section
             className="bg-fit bg-black bg-center bg-no-repeat bg-fixed text-white h-screen flex items-center justify-center"
@@ -17,6 +19,12 @@ const HeroSection = () => {
                 </p>
 
                 <div className="space-x-4">
+                   {userLoading ? <p>Loading</p> :user ? <Link
+                        to="/dashboard/client"
+                        className="inline-block bg-blue-800 text-white py-3 px-6 rounded-md text-lg font-semibold hover:bg-blue-900 transition-colors"
+                    >
+                        Dashboard
+                    </Link> : <>
                     <Link
                         to="/register"
                         className="inline-block bg-blue-800 text-white py-3 px-6 rounded-md text-lg font-semibold hover:bg-blue-900 transition-colors"
@@ -28,7 +36,7 @@ const HeroSection = () => {
                         className="inline-block bg-transparent border-2 border-white text-white py-3 px-6 rounded-md text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
                     >
                         Login
-                    </Link>
+                    </Link> </>}
                 </div>
             </div>
         </section>

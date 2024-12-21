@@ -8,7 +8,6 @@ const AccountSettings = () => {
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
-    const [role, setRole] = useState('Client');
     const [profilePicture, setProfilePicture] = useState(null);
     const [notifications, setNotifications] = useState({
         email: true,
@@ -158,13 +157,13 @@ const AccountSettings = () => {
 
     return (
         <div className="p-6 max-w-lg mx-auto space-y-6">
-            <button
+            {/* <button
                 onClick={() => toggleSection('role')}
                 className="w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
             >
                 {expandedSections.role ? 'Hide Role Settings' : 'Show Role Settings'}
-            </button>
-            {expandedSections.role && (
+            </button> */}
+            {/* {expandedSections.role && (
                 <div className="space-y-4">
                     <label htmlFor="role" className="block text-sm font-semibold">Select Role:</label>
                     <select
@@ -177,7 +176,7 @@ const AccountSettings = () => {
                         <option value="Admin">Admin</option>
                     </select>
                 </div>
-            )}
+            )} */}
 
             <button
                 onClick={() => toggleSection('username')}

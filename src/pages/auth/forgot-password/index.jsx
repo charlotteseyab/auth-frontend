@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import api from '../../../services/config';
+import { apiResetPassword, apiSendForgotPasswordCode } from '../../../services/auth';
+import { useUser } from '../../../hooks/user';
 
 const ForgotPassword = () => {
+    const { user } = useUser()
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -10,51 +15,41 @@ const ForgotPassword = () => {
     const [step, setStep] = useState(1);
     const navigate = useNavigate();
 
-    // Dummy sendResetCode function to simulate API response
-    const sendResetCode = async (email) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                if (email === "test@example.com") {
-                    resolve();
-                } else {
-                    reject(new Error("Error sending reset code."));
-                }
-            }, 1000); // Simulate delay
-        });
-    };
+    const rolebasedRedirect = () => {
+        if (user && user.roles.includes('admin')) {
+            navigate('/dashboard/admin')
+        } else if (user && user.roles.includes('client')) {
+            navigate('/dashboard/client')
+        }
+    }
+    useEffect(() => {
+        rolebasedRedirect()
+    }, [user])
 
-    // Dummy resetPassword function to simulate API response
-    const resetPassword = async ({ email, code, newPassword }) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                if (email === "test@example.com" && code === "123456" && newPassword) {
-                    resolve();
-                } else {
-                    reject(new Error("Password reset failed"));
-                }
-            }, 1000); // Simulate delay
-        });
-    };
+
 
     const handleSendCode = async (e) => {
         e.preventDefault();
+
         try {
-            await sendResetCode(email);
+            setLoading(true)
+            await apiSendForgotPasswordCode({ email });
             setMessage('Reset code sent to your email.');
-            setTimeout(() => {
-                setMessage('');
-                setStep(2);
-            }, 2000);
+            setMessage('');
+            setStep(2);
         } catch (error) {
             setMessage('Error sending reset code.');
+        } finally {
+            setLoading(false)
         }
     };
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
         try {
-            await resetPassword({ email, code, newPassword });
-            
+            setLoading(true)
+            await apiResetPassword({ email, passwordResetCode: code, newPassword });
+
             // Show success SweetAlert with confirmation button
             const result = await Swal.fire({
                 title: 'Password Reset Successful!',
@@ -75,9 +70,12 @@ const ForgotPassword = () => {
             if (result.isConfirmed) {
                 navigate('/login');
             }
-            
+
         } catch (error) {
             setMessage(error.message);
+        }
+        finally {
+            setLoading(false)
         }
     };
 
@@ -101,10 +99,11 @@ const ForgotPassword = () => {
                             />
                         </div>
                         <button
+                            disabled={loading}
                             type="submit"
                             className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                         >
-                            Send Reset Code
+                            {loading ? 'Sending...' : 'Send Reset Code'}
                         </button>
                     </form>
                 ) : (
@@ -143,10 +142,11 @@ const ForgotPassword = () => {
                             />
                         </div>
                         <button
+                            disabled={loading}
                             type="submit"
                             className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                         >
-                            Reset Password
+                            {loading ? 'Resetting...' : 'Reset Password'}
                         </button>
                     </form>
                 )}

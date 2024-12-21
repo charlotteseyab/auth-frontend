@@ -1,8 +1,5 @@
 import './App.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-// import Register from './pages/register/register'
-// import Login from './pages/login'
-
 import AdminDashboard from './pages/adminDashboard'
 import { Toaster } from 'react-hot-toast'
 import { ToastContainer } from 'react-toastify';
@@ -12,13 +9,16 @@ import AccountSettings from './pages/client-dashboard/AccountSettings';
 import AdminHome from './pages/adminDashboard/adminHome';
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/home'
-import LoginPage from './pages/login/login';
-import RegisterPage from './pages/register/register';
-import ForgotPasswordPage from './pages/forgot-password';
+import LoginPage from './pages/auth/login';
+import RegisterPage from './pages/auth/register';
+import ForgotPassword from './pages/auth/forgot-password';
 import ClientDashboard from './pages/client-dashboard';
 
-import ClientRoute from './routes/ClientRoute';
 import AdminRoute from './routes/AdminRoute';
+import ClientDashboardLayout from './layouts/ClientDashboardLayout';
+import ClientRoute from './routes/ClientRoute';
+import AdminAccountSettings from './pages/adminDashboard/adminAccountSettings';
+import AdminDashboardLayout from './layouts/AdminDashboardLayout';
 
 
 // Custom toast configurations
@@ -66,38 +66,30 @@ function App() {
         { index: true, element: <Home /> },
         { path: "login", element: <LoginPage /> },
         { path: "register", element: <RegisterPage /> },
-        { path: "forgot-password", element: <ForgotPasswordPage /> },
-
-        // Protected client routes
-        {
-          path: "/dashboard/client",
-          element: (
-            <ClientRoute >
-              <ClientDashboard />
-            </ClientRoute>
-          ),
-          children: [
-            { path: "settings", element: <AccountSettings /> }
-          ]
-        },
-
-        // Protected admin routes
-        {
-          path: "/dashboard/admin",
-          element: (
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-
-          ),
-          children: [
-            { index: true, element: <AdminHome /> }
-          ]
-        },
-
-       
+        { path: "forgot-password", element: <ForgotPassword /> },
       ]
-    }
+    },
+    {
+      path: "/dashboard/client",
+
+      element: <ClientRoute><ClientDashboardLayout /></ClientRoute>,
+      children: [
+        { index: true, element: <ClientDashboard /> },
+        { path: "settings", element: <AccountSettings /> }
+      ]
+    }, {
+      path: "/dashboard/admin",
+      element: (
+        <AdminRoute>
+          <AdminDashboardLayout />
+        </AdminRoute>
+
+      ),
+      children: [
+        { index: true, element: <AdminDashboard /> },
+        {path: "settings", element: <AdminAccountSettings /> }
+      ]
+    },
   ]);
 
   return (
